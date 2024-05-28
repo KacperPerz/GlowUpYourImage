@@ -1,5 +1,4 @@
 # DVC-related Ignored Files
-data/**/*.dvc
 
 # Data Files and Directories
 data/raw/
