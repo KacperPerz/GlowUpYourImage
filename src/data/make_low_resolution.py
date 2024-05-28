@@ -3,7 +3,7 @@ from PIL import Image
 from pathlib import Path
 import random
 
-ROOT_DIR = Path().resolve().parent
+ROOT_DIR = Path()
 
 input_dir = ROOT_DIR / 'data' / 'raw'
 output_dir = ROOT_DIR / 'data' / 'processed'
