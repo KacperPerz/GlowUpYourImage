@@ -1,0 +1,31 @@
+# DVC-related Ignored Files
+
+# Data Files and Directories
+data/raw/
+data/processed/
+data/external/
+
+# Intermediate and Output Files
+models/
+reports/figures/
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
+
+# Python Bytecode Files
+__pycache__/
+*.py[cod]
+
+# Environment and Dependency Files
+env/
+.venv/
+*.env
+*.egg-info/
+
+# IDE and Editor Specific Files
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
