@@ -7,7 +7,7 @@ ROOT_DIR = Path()
 
 input_dir = ROOT_DIR / 'data' / 'raw'
 output_dir = ROOT_DIR / 'data' / 'processed'
-
+print(ROOT_DIR)
 photo_extensions = ['.jpg', '.jpeg', '.png']
 for file in input_dir.iterdir():
     if file.is_file() and file.suffix.lower() in photo_extensions:
