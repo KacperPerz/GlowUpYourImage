@@ -1,7 +1,9 @@
 import os
-import numpy as np
 import cv2
+import mlflow
+import numpy as np
 import tensorflow as tf
+import matplotlib.pyplot as plt
 
 def build_srcnn_model():
     inputs = tf.keras.Input(shape=(1024, 1024, 1))
@@ -85,19 +87,100 @@ def super_resolve(image_path, model):
     result_image = postprocess_image(output, cb, cr)
     return result_image
 
+def plot_bias_variance_tradeoff(history):
+    """
+    Function plot loss abd valitadion loss curves on one plot
+    Inputs:
+        history - model history
+    Returns:
+        None - function saves plot as png
+    """
+
+    fig = plt.figure(figsize=(10,5))
+    plt.plot(range(1, EPOCHS + 1), history.history['loss'], label='Train loss')
+    plt.plot(range(1, EPOCHS + 1), history.history['val_loss'], label='Validation loss')
+    plt.title('Model loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend(['Train', 'Validation'], loc='upper left')
+    plt.tight_layout()
+
+    plt.savefig('plots/bias_variance_tradeoff.png')
+    plt.close(fig)
+
+
+def show_result_and_og(input, output):
+    """
+    Drawing subplot with generated and original image
+    Inputs: 
+        input - loaded original image,
+        output - generated image
+    Returns:
+        None - function saves plot as png
+    """
+
+    fig, (pred, true) = plt.subplots(1, 2, figsize=(20, 10))
+
+    # Plotting the generated imaage
+    pred.imshow(output)
+    pred.axis('off')
+    pred.set_title('Generated Image', fontsize=22)
+
+    # Plotting the original image
+    true.imshow(input)
+    true.axis('off')
+    true.set_title('Original Image', fontsize=22)
+    plt.tight_layout()
+
+    plt.savefig('plots/result.png')
+    plt.close(fig)
+
+    
+
+
 if __name__ == "__main__":
-    model = build_srcnn_model()
-    model.compile(optimizer='adam', loss='mean_squared_error')
 
-    raw_dir = 'raw'
-    processed_dir = 'processed'
-    low_res_images, high_res_images = load_dataset(raw_dir, processed_dir, limit=1000)
+    RAW_DIR = 'data/raw'
+    PROCESSED_DIR = 'data/processed'
+    EPOCHS = 50
+    BATCH_SIZE = 10
 
-    model.fit(low_res_images, high_res_images, epochs=50, batch_size=10, validation_split=0.1)
+    low_res_images, high_res_images = load_dataset(RAW_DIR, PROCESSED_DIR, limit=20)
 
-    model.save('srcnn_model.h5')
+    with mlflow.start_run():
 
-    input_image_path = 'processed/seed0208.png'
-    output_image = super_resolve(input_image_path, model)
+        model = build_srcnn_model()
+        model.summary()
+        model.compile(optimizer='adam', loss='mean_squared_error')
+
+        history = model.fit(low_res_images, high_res_images, epochs=EPOCHS, batch_size=BATCH_SIZE, validation_split=0.2)
+
+        # Save hiperparameters
+        mlflow.log_param('epochs', EPOCHS)
+        mlflow.log_param('optimizer', 'adam')
+        mlflow.log_param('batch_size', BATCH_SIZE)
+
+        # Save metrics
+        mlflow.log_metric('final_loss', history.history['loss'][-1])
+        mlflow.log_metric('final_val_loss', history.history['val_loss'][-1])
+
+        # Save plots
+        input_image_path = 'data/processed/seed0208.png'
+        input_image = plt.imread(input_image_path)
+        output_image = super_resolve(input_image_path, model)
+
+        plot_bias_variance_tradeoff(history)
+        show_result_and_og(input_image, output_image)
+
+        mlflow.log_artifact('plots/bias_variance_tradeoff.png')
+        mlflow.log_artifact('plots/result.png')
+    
+    # Log model
+    mlflow.tensorflow.log_model(model, 'srcnn_model')
+
+    # MLFlow zapisze i spickluje model
+    #model.save('srcnn_model.h5')
+
+    
 
     cv2.imwrite('high_resolution_image.jpg', output_image)

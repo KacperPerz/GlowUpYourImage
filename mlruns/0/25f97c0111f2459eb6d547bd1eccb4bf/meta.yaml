@@ -1,0 +1,16 @@
+artifact_uri: file:///C:/Users/lukas/Desktop/Studia/Magisterskie/Narz%C4%99dzia%20uczenia%20maszynowego/Projekt/GlowUpYourImage/mlruns/0/25f97c0111f2459eb6d547bd1eccb4bf/artifacts
+deleted_time: 1718119928284
+end_time: 1718119206904
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: deleted
+run_id: 25f97c0111f2459eb6d547bd1eccb4bf
+run_name: flawless-hawk-727
+run_uuid: 25f97c0111f2459eb6d547bd1eccb4bf
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1718115369395
+status: 4
+tags: []
+user_id: lukas
