@@ -33,3 +33,5 @@ Thumbs.db
 # JB
 raw
 processed
+*.h5
+
