@@ -1,0 +1,16 @@
+artifact_uri: file:///C:/Users/lukas/Desktop/Studia/Magisterskie/Narz%C4%99dzia%20uczenia%20maszynowego/Projekt/GlowUpYourImage/mlruns/0/ddb0bd3652f74624ba934341847cff93/artifacts
+deleted_time: 1718115239909
+end_time: 1718114549639
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: deleted
+run_id: ddb0bd3652f74624ba934341847cff93
+run_name: learned-chimp-603
+run_uuid: ddb0bd3652f74624ba934341847cff93
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1718114331118
+status: 4
+tags: []
+user_id: lukas

@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/lukas/Desktop/Studia/Magisterskie/Narz%C4%99dzia%20uczenia%20maszynowego/Projekt/GlowUpYourImage/mlruns/0/7807cf2e5faa47d6bda6d01dfb8df19a/artifacts
+end_time: 1718120674393
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 7807cf2e5faa47d6bda6d01dfb8df19a
+run_name: smiling-boar-531
+run_uuid: 7807cf2e5faa47d6bda6d01dfb8df19a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1718119938175
+status: 4
+tags: []
+user_id: lukas
