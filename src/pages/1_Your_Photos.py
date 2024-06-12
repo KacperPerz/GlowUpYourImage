@@ -4,12 +4,12 @@ import os
 import streamlit as st
 
 # Check if there are any photos in the data/input directory
-if len(os.listdir('/Users/admin/Desktop/studia/num_project/proj/GlowUpYourImage/data/input')) == 0:
+if len(os.listdir('/Volumes/XS1000/GlowUpYourImage/data/output')) == 0:
     st.write('You have no photos, upload some')
 else:
     # Display the photos in a grid
-    for filename in os.listdir('/Users/admin/Desktop/studia/num_project/proj/GlowUpYourImage/data/input'):
-        image_path = os.path.join('/Users/admin/Desktop/studia/num_project/proj/GlowUpYourImage/data/input', filename)
+    for filename in os.listdir('/Volumes/XS1000/GlowUpYourImage/data/output'):
+        image_path = os.path.join('/Volumes/XS1000/GlowUpYourImage/data/output', filename)
         st.image(image_path)
         
         # Create a download button for each image

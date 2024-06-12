@@ -61,6 +61,6 @@ def process_image(image_path, output_path):
     combined_image = np.hstack((original_resized, resize_image(downscaled_image, (1024, 1024)), upscaled_image))
 
     # Save the combined image
-    cv2.imwrite(output_path, combined_image)
+    cv2.imwrite(output_path, upscaled_image)
 
     return combined_image

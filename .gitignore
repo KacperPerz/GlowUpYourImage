@@ -36,4 +36,5 @@ Thumbs.db
 raw
 processed
 *.h5
-
+*.png
+*.jpg
