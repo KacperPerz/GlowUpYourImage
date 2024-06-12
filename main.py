@@ -128,7 +128,7 @@ def show_result_and_og(input, output):
     true.imshow(input)
     true.axis('off')
     true.set_title('Original Image', fontsize=22)
-    plt.tight_layout()
+    #plt.tight_layout()
     os.makedirs('plots', exist_ok=True)
     plt.savefig('plots/result.png')
     plt.close(fig)
@@ -141,7 +141,7 @@ def generate_random_string(length=10):
 if __name__ == "__main__":
     RAW_DIR = 'data/raw_slim'
     PROCESSED_DIR = 'data/processed_slim'
-    EPOCHS = 3
+    EPOCHS = 5
     BATCH_SIZE = 8
 
     # Split filenames into training and validation sets
@@ -150,17 +150,26 @@ if __name__ == "__main__":
     # Ensure the mlruns directory exists
     os.makedirs('mlruns', exist_ok=True)
     
-    # Set the MLFLOW_TRACKING_URI to the relative path ./mlruns
     os.environ['MLFLOW_TRACKING_URI'] = 'file:./mlruns'
 
-    # Create an experiment with a custom artifact location
-    experiment_id = mlflow.create_experiment(generate_random_string(),
-                                              artifact_location="file:./mlruns")
+    experiment_name = "NUM"
     
+    
+    try:
+        experiment_id = mlflow.create_experiment(experiment_name,
+                                             artifact_location="file:./mlruns")
+    except mlflow.MlflowException:
+        experiment = mlflow.get_experiment_by_name(experiment_name)
+        if experiment is not None:
+            experiment_id = experiment.experiment_id
+        else:
+            raise ValueError(f"Experiment {experiment_name} not found and could not be created.")
+
     mlflow.set_experiment(experiment_id)
 
     # Enable MLflow autologging for TensorFlow
     mlflow.tensorflow.autolog()
+
     with mlflow.start_run(experiment_id=experiment_id):
         model = build_srcnn_model()
         model.summary()
@@ -177,16 +186,6 @@ if __name__ == "__main__":
         # MLFlow zapisze i spickluje model
         model.save('srcnn_model.h5')
 
-        # Save hyperparameters
-        mlflow.log_param('epochs', EPOCHS)
-        mlflow.log_param('optimizer', 'adam')
-        mlflow.log_param('batch_size', BATCH_SIZE)
-        
-        model.save('srcnn_model.h5')
-        # Save metrics
-        mlflow.log_metric('final_loss', history.history['loss'][-1])
-        mlflow.log_metric('final_val_loss', history.history['val_loss'][-1])
-
         # Save plots
         input_image_path = 'data/processed/seed0208.png'
         input_image = plt.imread(input_image_path)
@@ -198,8 +197,7 @@ if __name__ == "__main__":
         mlflow.log_artifact('plots/bias_variance_tradeoff.png')
         mlflow.log_artifact('plots/result.png')
     
-    # Log model
-    mlflow.tensorflow.log_model(model, 'srcnn_model')
+        # Log model
+        mlflow.tensorflow.log_model(model, 'srcnn_model')
     
-
     cv2.imwrite('high_resolution_image.jpg', output_image)

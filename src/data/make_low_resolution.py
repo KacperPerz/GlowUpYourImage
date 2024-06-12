@@ -16,7 +16,7 @@ for file in input_dir.iterdir():
 
         
         width, height = image.size
-        random_number = 0.5 # random.uniform(0.5, 0.8) ## It is no longer random
+        random_number = 0.33 # random.uniform(0.5, 0.8) ## It is no longer random
         new_width = int(width * random_number)
         new_height = int(height * random_number)
         resized_image = image.resize((new_width, new_height))
