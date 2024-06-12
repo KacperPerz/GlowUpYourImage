@@ -4,7 +4,8 @@ import mlflow
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
-
+from sklearn.model_selection import train_test_split
+gf
 def build_srcnn_model():
     inputs = tf.keras.Input(shape=(1024, 1024, 1))  # Fixing the input size
     conv1 = tf.keras.layers.Conv2D(64, (9, 9), activation='relu', padding='same', name='conv1')(inputs)
@@ -45,8 +46,7 @@ def load_image_pairs(raw_dir, processed_dir, filenames):
         
         yield low_res_y, high_res_y
 
-def data_generator(raw_dir, processed_dir, batch_size):
-    filenames = os.listdir(raw_dir)
+def data_generator(raw_dir, processed_dir, filenames, batch_size):
     while True:
         np.random.shuffle(filenames)
         for i in range(0, len(filenames), batch_size):
@@ -82,7 +82,7 @@ def super_resolve(image_path, model):
     result_image = postprocess_image(output, cb, cr)
     return result_image
 
-def plot_bias_variance_tradeoff(history):
+def plot_bias_variance_tradeoff(history, epochs):
     """
     Function plot loss abd valitadion loss curves on one plot
     Inputs:
@@ -92,8 +92,8 @@ def plot_bias_variance_tradeoff(history):
     """
 
     fig = plt.figure(figsize=(10,5))
-    plt.plot(range(1, EPOCHS + 1), history.history['loss'], label='Train loss')
-    plt.plot(range(1, EPOCHS + 1), history.history['val_loss'], label='Validation loss')
+    plt.plot(range(1, epochs + 1), history.history['loss'], label='Train loss')
+    plt.plot(range(1, epochs + 1), history.history['val_loss'], label='Validation loss')
     plt.title('Model loss')
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
@@ -116,7 +116,7 @@ def show_result_and_og(input, output):
 
     fig, (pred, true) = plt.subplots(1, 2, figsize=(20, 10))
 
-    # Plotting the generated imaage
+    # Plotting the generated image
     pred.imshow(output)
     pred.axis('off')
     pred.set_title('Generated Image', fontsize=22)
@@ -130,32 +130,36 @@ def show_result_and_og(input, output):
     plt.savefig('plots/result.png')
     plt.close(fig)
 
-    
-
-
 if __name__ == "__main__":
-
     RAW_DIR = 'data/raw'
     PROCESSED_DIR = 'data/processed'
     EPOCHS = 100
     BATCH_SIZE = 8
 
-    with mlflow.start_run():
+    # Split filenames into training and validation sets
+    filenames = os.listdir(RAW_DIR)
+    train_filenames, val_filenames = train_test_split(filenames, test_size=0.1, random_state=42)
 
+    with mlflow.start_run():
         model = build_srcnn_model()
         model.summary()
         model.compile(optimizer='adam', loss='mean_squared_error')
-        raw_dir = RAW_DIR
-        processed_dir = PROCESSED_DIR
-        train_gen = data_generator(raw_dir, processed_dir, BATCH_SIZE)
-        steps_per_epoch = len(os.listdir(raw_dir)) // BATCH_SIZE
-        history = model.fit(train_gen, steps_per_epoch=steps_per_epoch, epochs=EPOCHS, validation_steps=steps_per_epoch * 0.1)
 
-        # Save hiperparameters
+        # Create data generators
+        train_gen = data_generator(RAW_DIR, PROCESSED_DIR, train_filenames, BATCH_SIZE)
+        val_gen = data_generator(RAW_DIR, PROCESSED_DIR, val_filenames, BATCH_SIZE)
+
+        steps_per_epoch = len(train_filenames) // BATCH_SIZE
+        validation_steps = len(val_filenames) // BATCH_SIZE
+
+        history = model.fit(train_gen, steps_per_epoch=steps_per_epoch, epochs=EPOCHS, validation_data=val_gen, validation_steps=validation_steps)
+
+        # Save hyperparameters
         mlflow.log_param('epochs', EPOCHS)
         mlflow.log_param('optimizer', 'adam')
         mlflow.log_param('batch_size', BATCH_SIZE)
-
+        
+        model.save('srcnn_model.h5')
         # Save metrics
         mlflow.log_metric('final_loss', history.history['loss'][-1])
         mlflow.log_metric('final_val_loss', history.history['val_loss'][-1])
@@ -165,7 +169,7 @@ if __name__ == "__main__":
         input_image = plt.imread(input_image_path)
         output_image = super_resolve(input_image_path, model)
 
-        plot_bias_variance_tradeoff(history)
+        plot_bias_variance_tradeoff(history, EPOCHS)
         show_result_and_og(input_image, output_image)
 
         mlflow.log_artifact('plots/bias_variance_tradeoff.png')
@@ -173,10 +177,6 @@ if __name__ == "__main__":
     
     # Log model
     mlflow.tensorflow.log_model(model, 'srcnn_model')
-
-    # MLFlow zapisze i spickluje model
-    model.save('srcnn_model.h5')
-
     
 
     cv2.imwrite('high_resolution_image.jpg', output_image)

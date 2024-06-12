@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/lukas/Desktop/Studia/Magisterskie/Narz%C4%99dzia%20uczenia%20maszynowego/Projekt/GlowUpYourImage/mlruns/0/1cc3a2566e9e4e76b543a50254713657/artifacts
+end_time: 1718188440186
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 1cc3a2566e9e4e76b543a50254713657
+run_name: learned-smelt-779
+run_uuid: 1cc3a2566e9e4e76b543a50254713657
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1718188438608
+status: 4
+tags: []
+user_id: janbr
