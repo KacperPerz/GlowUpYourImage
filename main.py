@@ -5,7 +5,7 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-gf
+
 def build_srcnn_model():
     inputs = tf.keras.Input(shape=(1024, 1024, 1))  # Fixing the input size
     conv1 = tf.keras.layers.Conv2D(64, (9, 9), activation='relu', padding='same', name='conv1')(inputs)
@@ -126,14 +126,14 @@ def show_result_and_og(input, output):
     true.axis('off')
     true.set_title('Original Image', fontsize=22)
     plt.tight_layout()
-
+    os.makedirs('plots', exist_ok=True)
     plt.savefig('plots/result.png')
     plt.close(fig)
 
 if __name__ == "__main__":
-    RAW_DIR = 'data/raw'
-    PROCESSED_DIR = 'data/processed'
-    EPOCHS = 100
+    RAW_DIR = 'data/raw_slim'
+    PROCESSED_DIR = 'data/processed_slim'
+    EPOCHS = 3
     BATCH_SIZE = 8
 
     # Split filenames into training and validation sets
@@ -153,6 +153,8 @@ if __name__ == "__main__":
         validation_steps = len(val_filenames) // BATCH_SIZE
 
         history = model.fit(train_gen, steps_per_epoch=steps_per_epoch, epochs=EPOCHS, validation_data=val_gen, validation_steps=validation_steps)
+        # MLFlow zapisze i spickluje model
+        model.save('srcnn_model.h5')
 
         # Save hyperparameters
         mlflow.log_param('epochs', EPOCHS)

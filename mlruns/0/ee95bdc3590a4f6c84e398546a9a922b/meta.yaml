@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/lukas/Desktop/Studia/Magisterskie/Narz%C4%99dzia%20uczenia%20maszynowego/Projekt/GlowUpYourImage/mlruns/0/ee95bdc3590a4f6c84e398546a9a922b/artifacts
+end_time: 1718189642766
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: ee95bdc3590a4f6c84e398546a9a922b
+run_name: unique-snail-592
+run_uuid: ee95bdc3590a4f6c84e398546a9a922b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1718189609041
+status: 4
+tags: []
+user_id: janbr

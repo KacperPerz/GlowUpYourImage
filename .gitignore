@@ -4,6 +4,8 @@
 data/raw/
 data/processed/
 data/external/
+data/raw_slim/
+data/processed_slim/
 
 # Intermediate and Output Files
 models/
