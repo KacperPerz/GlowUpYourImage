@@ -139,9 +139,10 @@ def generate_random_string(length=10):
     return random_string
 
 if __name__ == "__main__":
-    RAW_DIR = 'data/raw_slim'
-    PROCESSED_DIR = 'data/processed_slim'
-    EPOCHS = 5
+    RAW_DIR = 'data/raw'
+    PROCESSED_DIR = 'data/processed'
+    EPOCHS = 100
+
     BATCH_SIZE = 8
 
     # Split filenames into training and validation sets
