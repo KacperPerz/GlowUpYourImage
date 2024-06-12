@@ -1,0 +1,20 @@
+artifact_path: srcnn_model
+flavors:
+  python_function:
+    data: data
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.tensorflow
+    python_version: 3.10.14
+  tensorflow:
+    code: null
+    data: data
+    keras_version: 2.10.0
+    model_type: keras
+    save_format: tf
+mlflow_version: 2.13.2
+model_size_bytes: 795140
+model_uuid: fe625a74ca7d4a0db240104a2a68c585
+run_id: c657d662179b480f8dfaa856760e1d6e
+utc_time_created: '2024-06-12 14:55:45.855287'

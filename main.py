@@ -1,4 +1,6 @@
 import os
+import random
+import string
 import cv2
 import mlflow
 import numpy as np
@@ -117,6 +119,7 @@ def show_result_and_og(input, output):
     fig, (pred, true) = plt.subplots(1, 2, figsize=(20, 10))
 
     # Plotting the generated image
+    output = cv2.cvtColor(output, cv2.COLOR_BGR2RGB)
     pred.imshow(output)
     pred.axis('off')
     pred.set_title('Generated Image', fontsize=22)
@@ -130,6 +133,11 @@ def show_result_and_og(input, output):
     plt.savefig('plots/result.png')
     plt.close(fig)
 
+def generate_random_string(length=10):
+    characters = string.ascii_letters + string.digits
+    random_string = ''.join(random.choice(characters) for i in range(length))
+    return random_string
+
 if __name__ == "__main__":
     RAW_DIR = 'data/raw_slim'
     PROCESSED_DIR = 'data/processed_slim'
@@ -139,8 +147,21 @@ if __name__ == "__main__":
     # Split filenames into training and validation sets
     filenames = os.listdir(RAW_DIR)
     train_filenames, val_filenames = train_test_split(filenames, test_size=0.1, random_state=42)
+    # Ensure the mlruns directory exists
+    os.makedirs('mlruns', exist_ok=True)
+    
+    # Set the MLFLOW_TRACKING_URI to the relative path ./mlruns
+    os.environ['MLFLOW_TRACKING_URI'] = 'file:./mlruns'
 
-    with mlflow.start_run():
+    # Create an experiment with a custom artifact location
+    experiment_id = mlflow.create_experiment(generate_random_string(),
+                                              artifact_location="file:./mlruns")
+    
+    mlflow.set_experiment(experiment_id)
+
+    # Enable MLflow autologging for TensorFlow
+    mlflow.tensorflow.autolog()
+    with mlflow.start_run(experiment_id=experiment_id):
         model = build_srcnn_model()
         model.summary()
         model.compile(optimizer='adam', loss='mean_squared_error')
